@@ -1,0 +1,43 @@
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
+import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+import java.util.List;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+
+public class Main {
+    public static void main(String[] args) {
+        String keyword = "example";
+        String longestOption = "";
+        String shortestOption = "";
+        
+        WebDriver driver = new ChromeDriver();
+        driver.get("https://www.google.com");
+        
+        WebElement searchField = driver.findElement(By.name("q"));
+        searchField.sendKeys(keyword);
+        
+        By searchSuggestionsLocator = By.xpath("//*[@id='Alh6id']/div[1]/div/ul/li");
+        WebDriverWait wait = new WebDriverWait(driver, 10);
+        List<WebElement> searchSuggestions = wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(searchSuggestionsLocator));
+        
+        List<String> resultTexts = new ArrayList<>();
+        for (WebElement result : searchSuggestions) {
+            resultTexts.add(result.getText());
+        }
+        
+        driver.quit();
+        
+        longestOption = Collections.max(resultTexts, Comparator.comparingInt(String::length));
+        shortestOption = Collections.min(resultTexts, Comparator.comparingInt(String::length));
+        
+        System.out.println("Longest Option: " + longestOption);
+        System.out.println("Shortest Option: " + shortestOption);
+    }
+}
